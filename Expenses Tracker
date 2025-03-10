@@ -1,3 +1,20 @@
+import json
+from datetime import datetime
+
+# Load expenses from a JSON file
+def load_data():
+    try:
+        with open('expenses.json', 'r') as file:
+            return json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return []
+
+# Save expenses to a JSON file
+def save_data(expenses):
+    with open('expenses.json', 'w') as file:
+        json.dump(expenses, file, indent=4)
+
+# Add a new expense
 def add_expense(amount, description, category, date=None):
     expenses = load_data()
     if not date:
@@ -8,7 +25,7 @@ def add_expense(amount, description, category, date=None):
         print('Invalid date format. Please use YYYY-MM-DD.')
         return
     expense = {
-        'amount': amount,
+        'amount': float(amount),
         'description': description,
         'category': category,
         'date': date
@@ -17,7 +34,32 @@ def add_expense(amount, description, category, date=None):
     save_data(expenses)
     print('Expense added successfully!')
 
-# Main menu updated
+# View all expenses
+def view_expenses():
+    expenses = load_data()
+    if not expenses:
+        print('No expenses recorded yet.')
+        return
+    print('\nAll Expenses:')
+    for i, expense in enumerate(expenses, start=1):
+        print(f"{i}. {expense['date']} - {expense['category']} - {expense['description']} - ${expense['amount']:.2f}")
+
+# Show category-wise expense summary
+def category_summary():
+    expenses = load_data()
+    if not expenses:
+        print('No expenses recorded yet.')
+        return
+    summary = {}
+    for expense in expenses:
+        category = expense['category']
+        amount = expense['amount']
+        summary[category] = summary.get(category, 0) + amount
+    print('\nCategory Summary:')
+    for category, total in summary.items():
+        print(f"{category}: ${total:.2f}")
+
+# Main menu
 def main():
     while True:
         print('\nExpense Tracker')
@@ -36,6 +78,7 @@ def main():
         elif choice == '3':
             category_summary()
         elif choice == '4':
+            print('Exiting... Goodbye!')
             break
         else:
             print('Invalid choice. Please try again.')
