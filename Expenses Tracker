@@ -1,0 +1,44 @@
+def add_expense(amount, description, category, date=None):
+    expenses = load_data()
+    if not date:
+        date = input('Enter date (YYYY-MM-DD): ')
+    try:
+        datetime.strptime(date, '%Y-%m-%d')  # Validate date format
+    except ValueError:
+        print('Invalid date format. Please use YYYY-MM-DD.')
+        return
+    expense = {
+        'amount': amount,
+        'description': description,
+        'category': category,
+        'date': date
+    }
+    expenses.append(expense)
+    save_data(expenses)
+    print('Expense added successfully!')
+
+# Main menu updated
+def main():
+    while True:
+        print('\nExpense Tracker')
+        print('1. Add Expense')
+        print('2. View All Expenses')
+        print('3. Category Summary')
+        print('4. Exit')
+        choice = input('Choose an option: ')
+        if choice == '1':
+            amount = input('Enter amount: ')
+            description = input('Enter description: ')
+            category = input('Enter category: ')
+            add_expense(amount, description, category)
+        elif choice == '2':
+            view_expenses()
+        elif choice == '3':
+            category_summary()
+        elif choice == '4':
+            break
+        else:
+            print('Invalid choice. Please try again.')
+
+if __name__ == '__main__':
+    main()
